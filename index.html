@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz Examen PWA</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111827">
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto;background:#111827;color:#fff}
+button{padding:12px 16px;border-radius:10px;border:none;font-weight:600}
+.card{background:#1f2937;border-radius:16px;padding:16px;margin:12px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+const state={user:localStorage.getItem('user')||'',score:0,q:0,
+questions:[{q:"Capitale de la France ?",a:"Paris"},{q:"2 + 2 = ?",a:"4"},{q:"Planète rouge ?",a:"Mars"}]};
+function render(){
+ const a=document.getElementById('app');
+ if(!state.user){a.innerHTML=`<div class=card><h2>Pseudonyme</h2><input id=n><button onclick=setU()>OK</button></div>`;return;}
+ if(state.q>=state.questions.length){a.innerHTML=`<div class=card><h2>Terminé</h2><p>Score ${state.score}</p><button onclick=restart()>Rejouer</button></div>`;return;}
+ const q=state.questions[state.q];
+ a.innerHTML=`<div class=card><h3>${q.q}</h3><input id=a><button onclick=ans()>Valider</button></div>`;
+}
+function setU(){state.user=document.getElementById('n').value||'Anon';localStorage.setItem('user',state.user);render();}
+function ans(){if(document.getElementById('a').value.toLowerCase()==state.questions[state.q].a.toLowerCase())state.score++;state.q++;render();}
+function restart(){state.q=0;state.score=0;render();}
+render();
+</script>
+</body>
+</html>
